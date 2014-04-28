@@ -30,6 +30,9 @@ public class Application {
 			if(val == 0) {
 				val = (int)(100*(r.confidenceFound - confidenceFound));
 			}
+			if(val == 0) {
+				val = (r.LHS.size() + r.RHS.size())-(LHS.size() + RHS.size());
+			}
 			return val;
 		}
 	}
@@ -368,7 +371,7 @@ public class Application {
 			}
 		}
 		
-		System.out.println("Found the following frequent datasets with min Support as"+minSupport+": ");
+		System.out.println("Found the following frequent datasets with min Support as "+minSupport+": ");
 
 		//We filter items by their minimum support
 		for(String item : uniqueItems) {
@@ -444,14 +447,15 @@ public class Application {
 		
 		//Step 2 of our algorithm. We call the function to generate rules on all of our large itemsets. 
 		for(ArrayList<String> itemSet : largeItemsets) {
-			rules.addAll(getRulesFromItemset(itemSet, dataSet, minConfidence));
+			ArrayList<Rule> newRules = getRulesFromItemset(itemSet, dataSet, minConfidence);
+			rules.addAll(newRules);
 		}
 		
 		return rules;
 	}
 	
 	public static void main(String args[]) {
-		String[] myArg = {"D:\\EclipseWorkspace\\AprioriMiner\\INTEGRATED-DATASET.csv", "0.1", "1.0"};
+		String[] myArg = {"D:\\EclipseWorkspace\\AprioriMiner\\table_1_new.csv", "0.001", "0.3"};
 		args = myArg;
 		
 		String filePath;
@@ -474,14 +478,14 @@ public class Application {
 		
 		DataSet myDataSet = dataSetFromFile(filePath);
 		
-		System.out.println(myDataSet.rows);
+		//System.out.println(myDataSet.rows);
 		
 		System.out.println("\nMining frequent itemsets and rules...");
 		ArrayList<Rule> rulesFound = aprioriMine(myDataSet, minSupport, minConfidence);
 		
 		Collections.sort(rulesFound);
 		
-		System.out.println("\nFound the following "+rulesFound.size()+" rules with min Confidence as "+minSupport+": ");
+		System.out.println("\nFound the following "+rulesFound.size()+" rules with min Confidence as "+minConfidence+": ");
 		for(Rule r : rulesFound) {
 			System.out.println(r.printToString());
 		}
